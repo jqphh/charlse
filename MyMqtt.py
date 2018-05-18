@@ -32,7 +32,7 @@ class MyMqttClient:
         # client.username_pw_set(username, "")
         self.client.connect(self.mqttHost, self.mqttPort, self.mqttHeartbeat)
         self.client.loop_forever()
-        
+
     def mqtt_close(self):
         self.client.disconnect()
         
