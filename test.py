@@ -3,6 +3,7 @@
 
 import thread
 import time
+from HttpRequest import HttpRequest
 
 
 def time_thread(name, delay):
@@ -14,11 +15,15 @@ def time_thread(name, delay):
 
 
 if __name__ == '__main__':
-    try:
+    '''try:
         thread.start_new_thread(time_thread, ("Thread-1", 2))
         thread.start_new_thread(time_thread, ("Thread-2", 4))
     except Exception, e:
         print e
 
     while 1:
-        pass
+        pass'''
+
+    client = HttpRequest(url='https://n.163.com/#job')
+    client.super_http_download_img('D:\py')
+

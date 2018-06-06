@@ -3,7 +3,6 @@ import urllib2
 import cookielib
 import re
 import time
-import ftplib
 
 
 def my_http(url, param=None):
@@ -68,25 +67,6 @@ def get_time_stamp():
     data_secs = (ct - long(ct)) * 1000
     time_stamp = "%s.%03d" % (data_head, data_secs)
     return time_stamp
-
-
-def ftp_download(url, file_name):
-    if url is None or file_name is None:
-        return -1
-
-    cells = url.split('//')
-    cell = cells[1].split('/')
-    print cell[0]
-
-    try:
-        ftp = ftplib.FTP(host=cell[0])
-        fp = open(file_name, 'wb')
-        ftp.retrbinary('RETR ' + url, fp.write, 1024)
-        ftp.close()
-        ftp.quit()
-    except Exception, e:
-        print "[FTP Error]:%s" % e
-
 
 def download_img(url):
     if url is None:
