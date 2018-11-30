@@ -72,10 +72,10 @@ class HttpRequest:
             print img_url, file_name
 
             # download img
-            urllib.urlretrieve(img_url, file_name)
+            #urllib.urlretrieve(img_url, file_name)
 
         # 2.search css in web content
-        """css_re = re.compile(css_reg)
+        css_re = re.compile(css_reg)
         css_list = re.findall(css_re, html_content)
         for css_info in css_list:
             # print css_info
@@ -84,7 +84,6 @@ class HttpRequest:
             else:
                 css_url = http[0] + ':' + css_info[0]
 
-            file_name = 'D:\py\%s.%s' % (get_time_stamp(), img_info[2])
-            print img_url, file_name
-
-            download_img(css_url)"""
+            print css_url
+            self.request_url = css_url
+            self.super_http_download_img(path)
