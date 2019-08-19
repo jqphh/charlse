@@ -1,23 +1,17 @@
-#!/usr/bin/env python
 # _*_ coding:utf-8 _*_
 
-import urllib
-import urllib2
-import cookielib
+import urllib.request
+#import cookielib
 import re
+import ssl
 import time
 
 
 def get_time_stamp():
-    ct = time.time()
-    local_time = time.localtime(ct)
-    data_head = time.strftime("%Y-%m-%d-%H-%M-%S", local_time)
-    data_secs = (ct - long(ct)) * 1000
-    time_stamp = "%s.%03d" % (data_head, data_secs)
-    return time_stamp
+    return time.ctime(time.time())
 
 
-class HttpRequest:
+class httpRequest:
     # 输入url，请求参数
     request_url = None
     request_param = None
@@ -26,32 +20,25 @@ class HttpRequest:
         self.request_url = url
         self.request_param = param
 
-    def super_http(self):
-        headers = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'}
-
+    def super_http_post(self):
         try:
             if self.request_param is not None:
-                data = urllib.urlencode(self.request_param)
-            else:
-                data = None
-            request = urllib2.Request(self.request_url, data, headers)
-            response = urllib2.urlopen(request)
-            return response.read()
-        except Exception, e:
-            print e
-            return None
+                self.request_param = urllib.parse.urlencode(self.request_param)
+
+            req = urllib.request.Request(self.request_url)
+            resp = urllib.request.urlopen(req)
+            return resp.read()
+        except Exception as e:
+            print(e)
 
     def super_http_with_cookie(self):
         pass
 
     def super_http_download_img(self, path):
-        if self.request_url is None or path is None:
-            return -1
-
-        print "Visit website %s" % self.request_url
+        #print "Visit website %s" % self.request_url
 
         http = self.request_url.split(':')
-        html_content = self.super_http()
+        html_content = self.super_http_post()
         if html_content is None:
             return -2
 
@@ -69,7 +56,7 @@ class HttpRequest:
                 img_url = http[0] + ':' + img_info[0]
 
             file_name = '%s\%s.%s' % (path, get_time_stamp(), img_info[2])
-            print img_url, file_name
+            #print img_url, file_name
 
             # download img
             #urllib.urlretrieve(img_url, file_name)
@@ -84,6 +71,6 @@ class HttpRequest:
             else:
                 css_url = http[0] + ':' + css_info[0]
 
-            print css_url
+            #print css_url
             self.request_url = css_url
             self.super_http_download_img(path)
