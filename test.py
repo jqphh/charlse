@@ -13,7 +13,7 @@ def time_thread(name, delay):
 
 
 if __name__ == '__main__':
-    try:
+    '''try:
         thread1 = jThread("Thread-1", time_thread, 1)
         thread2 = jThread("Thread-2", time_thread, 1)
         thread1.start()
@@ -23,6 +23,6 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
 
-    print("exit")
+    print("exit")'''
     client = httpRequest(url='https://n.163.com/index.html')
     client.super_http_download_img('D:\py')

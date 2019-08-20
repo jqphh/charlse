@@ -27,7 +27,8 @@ class httpRequest:
 
             req = urllib.request.Request(self.request_url)
             resp = urllib.request.urlopen(req)
-            return resp.read()
+            #bytes to string
+            return resp.read().decode()
         except Exception as e:
             print(e)
 
@@ -47,23 +48,22 @@ class httpRequest:
 
         # 1.search img in web content
         img_re = re.compile(img_reg)
-        img_list = re.findall(img_re, html_content)
+        img_list = img_re.findall(html_content)
         for img_info in img_list:
-            # print img_info
             if 'http' in img_info[1]:
                 img_url = img_info[0]
             else:
                 img_url = http[0] + ':' + img_info[0]
 
             file_name = '%s\%s.%s' % (path, get_time_stamp(), img_info[2])
-            #print img_url, file_name
+            print(img_url + ':' + file_name)
 
             # download img
             #urllib.urlretrieve(img_url, file_name)
 
         # 2.search css in web content
         css_re = re.compile(css_reg)
-        css_list = re.findall(css_re, html_content)
+        css_list = css_re.findall(html_content)
         for css_info in css_list:
             # print css_info
             if 'http' in css_info[1]:
@@ -71,6 +71,6 @@ class httpRequest:
             else:
                 css_url = http[0] + ':' + css_info[0]
 
-            #print css_url
+            print(css_url)
             self.request_url = css_url
             self.super_http_download_img(path)
