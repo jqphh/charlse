@@ -32,8 +32,13 @@ class httpRequest:
         except Exception as e:
             print(e)
 
-    def super_http_with_cookie(self):
-        pass
+    @classmethod
+    def super_http_with_cookie(cls):
+        print(cls.request_url)
+
+    @staticmethod
+    def super_download_img(url, path):
+        urllib.request.urlretrieve(url, path)
 
     def super_http_download_img(self, path):
         #print "Visit website %s" % self.request_url
@@ -41,7 +46,7 @@ class httpRequest:
         http = self.request_url.split(':')
         html_content = self.super_http_post()
         if html_content is None:
-            return -2
+            return -1
 
         img_reg = r'((http.:)?//.+\.(jpg|png|jpeg))'
         css_reg = r'((http.:)?//.+\.css)'
@@ -74,3 +79,5 @@ class httpRequest:
             print(css_url)
             self.request_url = css_url
             self.super_http_download_img(path)
+        
+        return 0

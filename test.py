@@ -24,5 +24,10 @@ if __name__ == '__main__':
         print(e)
 
     print("exit")'''
-    client = httpRequest(url='https://n.163.com/index.html')
-    client.super_http_download_img('D:\py')
+    #client = httpRequest(url='https://n.163.com/index.html')
+    #client.super_http_download_img('D:\py')
+    img = 'https://i.ys7.com/streamer/alarm/url/get?fileId=20190829171859-159723239-1-00000-2-1&deviceSerialNo=159723239&cn=1&isEncrypted=1&ct=1&lc=90&bn=1_hikalarm'
+    img_file = 'D:\img.jpg'
+
+    httpRequest.super_http_with_cookie()
+    httpRequest.super_download_img(img, img_file)
