@@ -1,6 +1,6 @@
 # _*_ coding:utf-8 _*_
 
-import urllib.request
+from urllib import request
 #import cookielib
 import re
 import ssl
@@ -20,15 +20,15 @@ class httpRequest:
         self.request_url = url
         self.request_param = param
 
-    def super_http_post(self):
+    @staticmethod
+    def super_http_post(url):
         try:
-            if self.request_param is not None:
-                self.request_param = urllib.parse.urlencode(self.request_param)
-
-            req = urllib.request.Request(self.request_url)
-            resp = urllib.request.urlopen(req)
+            # req = request.Request(self.request_url)
+            resp = request.urlopen(url)
             #bytes to string
-            return resp.read().decode()
+            content = resp.read().decode()
+            resp.close()
+            return content
         except Exception as e:
             print(e)
 
@@ -38,7 +38,7 @@ class httpRequest:
 
     @staticmethod
     def super_download_img(url, path):
-        urllib.request.urlretrieve(url, path)
+        request.urlretrieve(url, path)
 
     def super_http_download_img(self, path):
         #print "Visit website %s" % self.request_url
@@ -83,18 +83,31 @@ class httpRequest:
         return 0
 
     def super_download_story(self):
-        html_content = self.super_http_post()
-        if html_content is None:
+        content = httpRequest.super_http_post(self.request_url)
+        if content is None:
             return -1
 
-        img_reg = r'<dd><a href="(.*?)" title="(.*?)">(.*?)</a></dd>'
-        img_re = re.compile(img_reg)
-        img_list = img_re.findall(html_content)
-        for img_info in img_list:
-            self.download_and_save_file(self.request_url + '/' + img_info[0], img_info[1])
+        content_reg = r'<dd><a href="(.*?)" title="(.*?)">(.*?)</a></dd>'
+        content_re = re.compile(content_reg)
+        story_list = content_re.findall(content)
+        for story_info in story_list:
+            child_url = self.request_url + '/' + story_info[0]
+            httpRequest.download_and_save_file(child_url, story_info[1])
 
-    def download_and_save_file(self, url, title):
-        #f = open(r'C:\Users\admin\Desktop\DNAofSuperGod\novel.txt', 'a+')
-        #f.writelines(title + '\n')
-        #f.writelines(content + '\n')
-        print(title + ':' + url)
+        return 0
+
+    @staticmethod
+    def download_and_save_file(url, title):
+        print('Downloading ' + title + ':' + url)
+        content = httpRequest.super_http_post(url)
+        if content is None:
+            return -1
+
+        content_reg = r'<div id="content">(.*?)</div>'
+        content_re = re.compile(content_reg)
+        story_content = content_re.findall(content)
+        print(story_content)
+
+        f = open(r'D:\绝世唐门.txt', 'a+')
+        f.writelines(title + '\n')
+        f.writelines(story_content[0] + '\n')
