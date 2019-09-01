@@ -29,5 +29,7 @@ if __name__ == '__main__':
     img = 'https://i.ys7.com/streamer/alarm/url/get?fileId=20190829171859-159723239-1-00000-2-1&deviceSerialNo=159723239&cn=1&isEncrypted=1&ct=1&lc=90&bn=1_hikalarm'
     img_file = 'D:\img.jpg'
 
-    httpRequest.super_http_with_cookie()
-    httpRequest.super_download_img(img, img_file)
+    #httpRequest.super_http_with_cookie()
+    #httpRequest.super_download_img(img, img_file)
+    story = httpRequest(url='https://www.biquge.info/0_580/')
+    story.super_download_story()

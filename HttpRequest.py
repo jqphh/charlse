@@ -81,3 +81,20 @@ class httpRequest:
             self.super_http_download_img(path)
         
         return 0
+
+    def super_download_story(self):
+        html_content = self.super_http_post()
+        if html_content is None:
+            return -1
+
+        img_reg = r'<dd><a href="(.*?)" title="(.*?)">(.*?)</a></dd>'
+        img_re = re.compile(img_reg)
+        img_list = img_re.findall(html_content)
+        for img_info in img_list:
+            self.download_and_save_file(self.request_url + '/' + img_info[0], img_info[1])
+
+    def download_and_save_file(self, url, title):
+        #f = open(r'C:\Users\admin\Desktop\DNAofSuperGod\novel.txt', 'a+')
+        #f.writelines(title + '\n')
+        #f.writelines(content + '\n')
+        print(title + ':' + url)
