@@ -3,14 +3,15 @@
 import threading
 import time
 
+
 class jThread (threading.Thread):
-    def __init__(self, threadName, threadFunc, threadArg):
+    def __init__(self, thread_name, thread_func, thread_arg):
         threading.Thread.__init__(self)
-        self.threadName = threadName
-        self.threadFunc = threadFunc
-        self.threadArg = threadArg
+        self.threadName = thread_name
+        self.threadFunc = thread_func
+        self.threadArg = thread_arg
 
     def run(self):
-        print(time.ctime(time.time()) + " Start thread: " + self.name)
-        self.threadFunc(self.threadName, self.threadArg)
-        print(time.ctime(time.time()) + " End thread: " + self.name)
+        print(time.ctime(time.time()) + " Start thread: " + self.thread_name)
+        self.thread_func(self.thread_arg)
+        print(time.ctime(time.time()) + " End thread: " + self.thread_name)
