@@ -4,6 +4,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import re
 import time
+import gzip
 
 
 def get_time_stamp():
@@ -131,7 +132,7 @@ class httpRequest:
         aa = dl.find_all('a')
         # 将所有章节信息保存到数组
         for a in aa:
-            chapter = [a['href'], a['title']]
+            chapter = [a['href'], a.string]
             directory.append(chapter)
         '''for item in dl.children:
             a = item.find('a')'''
@@ -143,7 +144,7 @@ class httpRequest:
             f = open(file, 'a+', errors='ignore')
 
             for chapter in directory:
-                chapter_url = self.request_url + '/' + chapter[0]
+                chapter_url = self.request_url + '/' + chapter[0][7:]
                 chapter_tile = chapter[1]
                 print('下载章节： ' + chapter_tile + ':' + chapter_url)
                 content = httpRequest.super_http(chapter_url)

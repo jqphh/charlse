@@ -12,6 +12,6 @@ class jThread (threading.Thread):
         self.threadArg = thread_arg
 
     def run(self):
-        print(time.ctime(time.time()) + " Start thread: " + self.thread_name)
-        self.thread_func(self.thread_arg)
-        print(time.ctime(time.time()) + " End thread: " + self.thread_name)
+        print(time.ctime(time.time()) + " Start thread: " + self.threadName)
+        self.threadFunc(self.threadArg)
+        print(time.ctime(time.time()) + " End thread: " + self.threadName)

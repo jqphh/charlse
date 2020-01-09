@@ -4,6 +4,7 @@ from jThread import jThread
 from httpRequest import httpRequest
 import time
 import socket
+from jMysql import jMysql
 
 
 def time_thread(name, delay):
@@ -16,20 +17,46 @@ def time_thread(name, delay):
 
 def tcp_test(host):
     while True:
-        time.sleep(15)
+        time.sleep(5)
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print('connect ' + host[0])
-            sock.connect(host)
-            sock.close()
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                print('connect ' + host[0])
+                sock.connect(host)
+                str = '{\'id\':1}'
+                sock.send(str.encode('utf-8'))
+                re = sock.recv(1024)
         except Exception as e:
             print(e)
 
 
-if __name__ == '__main__':
-    story = httpRequest('https://www.biquge.info/0_580/', target='绝世唐门', target_path='D:\\story')
+def download_story():
+    # story = httpRequest('https://www.biquge.info/0_580/', target='绝世唐门', target_path='D:\\story')
+    story = httpRequest('http://www.xbiquge.la/5/5651/', target='朱雀记', target_path='D:\\story')
     story.download_story()
 
-    #url1 = 'http://device.chiq-cloud.com:8080/cdc/device/register'
-    #param1 = '{"system":{"ipp":"3.0","key":"key3.0"},"request":{"devlist":[{"devid":"MY2w3DRvmacaT17070300818","sn":"MY2w3DRvmacaT17070300818","productid":"SLIFE_GW0001-7406593c56","swver":"2.6.099","mac":"A2:B2:CD:EE:F2:A3"}]}}'
-    #ipp = httpRequest.super_http_post(url1, param1)
+
+def test_mysql():
+    mysql = {
+        'host': '47.106.37.46',
+        'user': 'root',
+        'passwd': 'Lichenxin1!',
+        'db': 'weibo'
+    }
+    mysql_client = jMysql(host=mysql['host'], user=mysql['user'], passwd=mysql['passwd'], db=mysql['db'])
+    result = mysql_client.execute_sql('SHOW TABLES')
+    if result is not None:
+        for x in result:
+            print(x)
+
+    result = mysql_client.execute_sql('SELECT * FROM login_info')
+    if result is not None:
+        for x in result:
+            print(x)
+
+
+if __name__ == '__main__':
+    # download_story()
+    # test_mysql()
+    # tcp_test(('54.222.181.181', 8083))
+
+
