@@ -13,5 +13,5 @@ class jThread (threading.Thread):
 
     def run(self):
         print(time.ctime(time.time()) + " Start thread: " + self.threadName)
-        self.threadFunc(self.threadArg)
+        self.threadFunc(*self.threadArg)
         print(time.ctime(time.time()) + " End thread: " + self.threadName)

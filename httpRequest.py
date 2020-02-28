@@ -1,6 +1,8 @@
 # _*_ coding:utf-8 _*_
 
 import urllib.request
+from io import BytesIO
+
 from bs4 import BeautifulSoup
 import re
 import time
@@ -16,11 +18,12 @@ class httpRequest:
     request_url = None
     request_param = None
 
-    def __init__(self, url, param=None, target=None, target_path=None):
+    def __init__(self, url, param=None, target=None, target_path=None, ui_handle=None):
         self.request_url = url
         self.request_param = param
         self.target = target
         self.target_path = target_path
+        self.ui_handle = ui_handle
 
     @staticmethod
     def super_download_img(url, path):
@@ -58,8 +61,17 @@ class httpRequest:
                 # 通过get方式访问
                 req = urllib.request.Request(url)
             resp = urllib.request.urlopen(req)
-            # bytes to string
-            content = resp.read().decode('utf-8')
+
+            # 处理网站gzip压缩流
+            encode_type = resp.info().get('Content-Encoding')
+            if encode_type == 'gzip':
+                content = resp.read()
+                buff = BytesIO(content)
+                f = gzip.GzipFile(fileobj=buff)
+                content = f.read().decode('utf-8')
+            else:
+                content = resp.read().decode('utf-8')
+
             resp.close()
             return content
         except Exception as e:
@@ -109,57 +121,3 @@ class httpRequest:
 
         return 0
 
-    def download_img(self):
-        pass
-
-    def download_story(self):
-        directory = self.get_story_directory()
-
-        if directory is not None:
-            self.download_story_content(directory)
-
-    def get_story_directory(self):
-        content = httpRequest.super_http(self.request_url)
-        if content is None:
-            return None
-
-        directory = []
-
-        soup = BeautifulSoup(content, 'html.parser')
-        # 查找第一个dl标签
-        dl = soup.find('dl')
-        # 查找dl下所有a标签
-        aa = dl.find_all('a')
-        # 将所有章节信息保存到数组
-        for a in aa:
-            chapter = [a['href'], a.string]
-            directory.append(chapter)
-        '''for item in dl.children:
-            a = item.find('a')'''
-        return directory
-
-    def download_story_content(self, directory):
-        file = self.target_path + '\\' + self.target + '.txt'
-        try:
-            f = open(file, 'a+', errors='ignore')
-
-            for chapter in directory:
-                chapter_url = self.request_url + '/' + chapter[0][7:]
-                chapter_tile = chapter[1]
-                print('下载章节： ' + chapter_tile + ':' + chapter_url)
-                content = httpRequest.super_http(chapter_url)
-                if content is None:
-                    print("获取章节内容失败")
-                    continue
-                else:
-                    soup = BeautifulSoup(content, 'html.parser')
-                    div = soup.find('div', attrs={'id': 'content'})
-                    # [s.extract() for s in soup('script')]
-                    story_content = str(div).replace('<br/>', '\n').replace('<div id="content">', '').replace('</div>', '').strip()
-
-                    f.writelines(chapter_tile + '\n')
-                    f.writelines(story_content + '\n')
-
-            f.close()
-        except Exception as e:
-            print(e)

@@ -58,5 +58,9 @@ if __name__ == '__main__':
     # download_story()
     # test_mysql()
     # tcp_test(('54.222.181.181', 8083))
+    thread1 = jThread('a', time_thread, ('a', 1))
+    thread2 = jThread('b', time_thread, ('b', 2))
+    thread1.start()
+    thread2.start()
 
 
