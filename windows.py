@@ -1,6 +1,6 @@
 # _*_ coding:utf-8 _*_
 
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from functools import partial
 import sys
 
@@ -14,8 +14,7 @@ download_thread = None
 
 
 def download_story(story_site, story_name, story_dir, win_ui):
-    content = httpRequest.super_http(story_site)
-    story = jDownStory(source=content, name=story_name, path=story_dir, ui=win_ui, url=story_site)
+    story = jDownStory(name=story_name, path=story_dir, ui=win_ui, url=story_site)
     story.download_story()
 
 
@@ -29,22 +28,26 @@ def click2(ui_win):
     story_site = ui_win.lineEdit_2.text()
     story_dir = ui_win.lineEdit_3.text()
 
-    ui_win.textBrowser.append(str('开始从' + story_site + '下载《' + story_name + '》'))
-    ui_win.textBrowser.append(str('文件将被保存到' + story_dir + '\\' + story_name + '.txt'))
+    ui_win.textBrowser.append('开始从' + story_site + '下载《' + story_name + '》')
+    ui_win.textBrowser.append('文件将被保存到' + story_dir + '\\' + story_name + '.txt')
     download_thread = jThread('Download Thread', download_story, (story_site, story_name, story_dir, ui_win))
     # 设置守护线程(分离)，防止阻塞主界面
     download_thread.setDaemon(True)
     download_thread.start()
 
 
-class downloadStory(Ui_MainWindow):
+def click3(ui_win):
+    file_path = QFileDialog.getExistingDirectory(ui_win, "请选择文件路径...", ".")
+
+
+'''class downloadStory(Ui_MainWindow):
 
     def __init__(self):
         super().__init__()
         self.setupUi()
 
     def click2(self, ui):
-        pass
+        pass'''
 
 
 if __name__ == '__main__':
@@ -55,6 +58,8 @@ if __name__ == '__main__':
     MainWindow.show()
     ui.pushButton.clicked.connect(click1)
     ui.pushButton_2.clicked.connect(partial(click2, ui))
+    ui.toolButton.clicked.connect(partial(click3, ui))
+    ui.pushButton_3.clicked.connect(partial(click3, ui))
     sys.exit(app.exec_())
 
 

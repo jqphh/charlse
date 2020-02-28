@@ -7,14 +7,13 @@ from httpRequest import httpRequest
 class jDownStory:
     """
     This class is used to download story from a website.
-    :param source: Html content from the home page of a story
     :param name: The story name
     :param path: The path used to store story on the disk
-    :param ui: The ui handle of the user tool
+    :param ui: The ui handle of the user tool, if ui is None, this class with use standard function to print log
     :param url: The home page of the story
     """
-    def __init__(self, source=None, name=None, path=None, ui=None, url=None):
-        self.story_source = source
+    def __init__(self, name=None, path=None, ui=None, url=None):
+        self.story_source = None
         self.story_name = name
         self.story_path = path
         self.story_url = url
@@ -29,6 +28,7 @@ class jDownStory:
             print(log)
 
     def get_story_directory(self):
+        self.story_source = httpRequest.super_http(self.story_url)
         if self.story_source is None:
             return
 
