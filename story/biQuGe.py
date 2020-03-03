@@ -1,10 +1,13 @@
 # _*_ coding:utf-8 _*_
+import threading
+
 from bs4 import BeautifulSoup
 
 from httpRequest import httpRequest
+from jStoppableThread import jStoppableThread
 
 
-class jDownStory:
+class biQuGe(jStoppableThread):
     """
     This class is used to download story from a website.
     :param name: The story name
@@ -13,6 +16,7 @@ class jDownStory:
     :param url: The home page of the story
     """
     def __init__(self, name=None, path=None, ui=None, url=None):
+        super().__init__()
         self.story_source = None
         self.story_name = name
         self.story_path = path
@@ -54,26 +58,30 @@ class jDownStory:
             f = open(file, 'a+', errors='ignore')
 
             for chapter in self.directory:
-                chapter_url = self.story_url + '/' + chapter[0]
-                chapter_tile = chapter[1]
-                self.log_print('下载章节： ' + chapter_tile)
-                content = httpRequest.super_http(chapter_url)
-                if content is None:
-                    self.log_print("获取章节内容失败")
-                    continue
+                if self.is_stopped():
+                    self.log_print('终止下载')
+                    break
                 else:
-                    soup = BeautifulSoup(content, 'html.parser')
-                    div = soup.find('div', attrs={'id': 'content'})
-                    # [s.extract() for s in soup('script')]
-                    story_content = str(div).replace('<br/>', '\n').replace('<div id="content">', '').replace('</div>', '').strip()
+                    chapter_url = self.story_url + '/' + chapter[0]
+                    chapter_tile = chapter[1]
+                    self.log_print('下载章节： ' + chapter_tile)
+                    content = httpRequest.super_http(chapter_url)
+                    if content is None:
+                        self.log_print("获取章节内容失败")
+                        continue
+                    else:
+                        soup = BeautifulSoup(content, 'html.parser')
+                        div = soup.find('div', attrs={'id': 'content'})
+                        # [s.extract() for s in soup('script')]
+                        story_content = str(div).replace('<br/>', '\n').replace('<div id="content">', '').replace('</div>', '').strip()
 
-                    f.writelines(chapter_tile + '\n')
-                    f.writelines(story_content + '\n')
+                        f.writelines(chapter_tile + '\n')
+                        f.writelines(story_content + '\n')
 
             f.close()
         except Exception as e:
             print(e)
 
-    def download_story(self):
+    def run(self):
         self.get_story_directory()
         self.download_story_content()
